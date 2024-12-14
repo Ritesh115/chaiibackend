@@ -13,7 +13,7 @@
   "author": "ritesh",
   "license": "ISC",
   "dependencies": {
-    "env": "^0.0.2",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2"
   }
 }
