@@ -9,7 +9,7 @@ app.get('/' , (req , res) => {
 })
 
 app.get('/login' , (req , res) => {
-   const jokes = [
+   const user_data = [
       {
         "id": 1,
         "username": "john_doe",
@@ -43,7 +43,7 @@ app.get('/login' , (req , res) => {
         "isActive": true
       }
     ]
-   res.send(jokes)
+   res.send(user_data)
 })
 
  

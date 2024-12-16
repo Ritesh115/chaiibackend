@@ -4,11 +4,18 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [user_data, setuser_data] = useState([]);
 
   return (
     <>
       <h1>chai and fullstack</h1>
+      <p>user_data strength : {user_data.length}</p>
+      {user_data.map((item) => {
+        <div key={user_data.id}>
+          <h1>{user_data.username}</h1>
+          <p>{username.age}</p>
+        </div>;
+      })}
     </>
   );
 }
