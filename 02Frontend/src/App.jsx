@@ -16,19 +16,19 @@ function App() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  });
 
   return (
     <>
       <h1>chai and fullstack</h1>
       <p>user_data strength : {user_data.length}</p>
 
-      {user_data.map((user) => {
+      {user_data.map((user) => (
         <div key={"user.id"}>
           <h3>{user.username}</h3>
           <p> {user.email} </p>
-        </div>;
-      })}
+        </div>
+      ))}
     </>
   );
 }

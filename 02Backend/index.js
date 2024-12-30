@@ -8,7 +8,7 @@ app.get('/' , (req , res)=>{
    res.send('hello welcome..')
 })
 
-app.get('/login' , (req , res) => {
+app.get('/api/login' , (req , res) => {
   const user_data = [
      {
        "id": 1,
