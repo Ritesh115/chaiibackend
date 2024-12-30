@@ -9,7 +9,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("https://localhost:3000/login")
+      .get("/api/login")
       .then((response) => {
         setuser_data(response.data);
       })
