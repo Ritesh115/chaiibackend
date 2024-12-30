@@ -7,6 +7,17 @@ import axios from "axios";
 function App() {
   const [user_data, setuser_data] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get("https://localhost:3000/login")
+      .then((response) => {
+        setuser_data(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   return (
     <>
       <h1>chai and fullstack</h1>
