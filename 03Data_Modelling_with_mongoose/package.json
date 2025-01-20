@@ -1,0 +1,16 @@
+{
+  "name": "03data_modelling_with_mongoose",
+  "version": "1.0.0",
+  "description": "learning Data Modelling with Mongoose",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
+  }
+}
+
