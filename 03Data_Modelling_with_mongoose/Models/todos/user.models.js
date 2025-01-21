@@ -4,21 +4,21 @@ const userSchema = new mongoose.Schema(
   //1 . first field which include the data of user
   {
     username : {
-    type : string ,
+    type : String ,
     required : true , 
     unique : true ,
     lowercase : true,
    },
 
    email : {
-    type : string , 
+    type : String , 
     required : true,
     unique : true , 
     lowercase : true,
    },
 
     password : {
-    type : string , 
+    type : String , 
     required : true,
     },
  },

@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 
 const subTodoSchema = new mongoose.Schema( {
   content : {
-    type : string ,
-    require : true ,
+    type : String ,
+    required : true ,
   },
   complete : {
     type : Boolean , 

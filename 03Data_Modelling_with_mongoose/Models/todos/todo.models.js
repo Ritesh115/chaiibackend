@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 
 const todoSchema = new mongoose.Schema(
   {
+    //content: Represents the main text or description of the to-do item (e.g., "Buy groceries").
     content : {
-      type : string ,
-      require : true ,
+      type : String ,
+      required : true ,
     },
     complete : {
       type : Boolean,
@@ -13,7 +14,7 @@ const todoSchema = new mongoose.Schema(
     createdBy : {
       type : mongoose.Schema.Types.ObjectId,
       ref : "User" ,
-    }, //lnking to models
+    }, //createdBy: Links the to-do item to a user who created it.
     subTodos : [
     {
         type : mongoose.Schema.Types.ObjectId,
