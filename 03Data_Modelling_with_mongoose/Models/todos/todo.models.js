@@ -8,8 +8,18 @@ const todoSchema = new mongoose.Schema(
     },
     complete : {
       type : Boolean,
-      
+      default : false ,
+    },
+    createdBy : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "User" ,
+    }, //lnking to models
+    subTodos : [
+    {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "SubTodo" ,
     }
+  ]  //Array of Sub-Todos 
   },
 
 
