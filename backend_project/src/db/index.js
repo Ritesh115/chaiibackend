@@ -8,7 +8,7 @@ const connectDB = async () => {
       try {
         const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`)
         //mongoose.connect gives us a object which contains the connection details.
-   console.log(connectionInstance);
+  //  console.log(connectionInstance);
         console.log(`\n MONGODB connected SUCCESSFULLY !! DB HOST : ${connectionInstance.connection.host} \n`);
         //jyst to know the url of the DB. at the time of deployment .
       } catch (error) {
