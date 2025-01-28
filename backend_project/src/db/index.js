@@ -2,7 +2,7 @@
 import mongoose from "mongoose" ;
 import {DB_NAME} from "../constants.js" ;
 
-
+//DB connect me kuch time to lagta hai is liye async-await.
 const connectDB = async () => {
   //ab DB connect hoga problems to a sakta hai is liye try catch use kiya.
       try {
