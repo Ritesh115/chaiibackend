@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import mongooseaggregatePaginate from 'mongoose-aggregate-paginate-v2';
+import bcrypt from 'bcrypt';
 
 const  userSchema = new mongoose.schema({
    username : {
@@ -44,5 +46,21 @@ const  userSchema = new mongoose.schema({
   },
 
 } , { timestamps: true });
+
+
+userSchema.plugin(mongooseaggregatePaginate);
+
+// This is for the password hashing.
+userSchema.pre("save" , async function (next) {
+  if(!this.isModified('password')) return next(); //Skip if password is unchanged
+  
+  this.password = bcrypt.hash(this.password , 8); //// Hash new password
+  next();
+
+})
+
+
+
+
 
 export const User = mongoose.model('User', userSchema);
