@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import mongooseaggregatePaginate from 'mongoose-aggregate-paginate-v2';
 import bcrypt from 'bcrypt';
+import jsonwebtoken from 'jsonwebtoken';
 
 const  userSchema = new mongoose.schema({
    username : {
@@ -59,7 +60,11 @@ userSchema.pre("save" , async function (next) {
 
 })
 
-
+// This is for the password verification.
+// This is a custom method that we are creating.
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return   await bcrypt.compare(password , this.password);//compare returns a Boolean value.
+}
 
 
 
