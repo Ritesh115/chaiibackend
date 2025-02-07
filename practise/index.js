@@ -1,23 +1,26 @@
 require('dotenv').config();
+const Path = require('path');
 const express = require('express');
-
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' })
 
 const app = express();
 
 const PORT = 3000;
 
+app.set('view engine', 'ejs');
+app.set('views', Path.resolve("./views"));
 
 app.get('/'  , (req , res)=>{
-    res.send("hello world");
+    return res.render('homepage')
 })
 
-app.get('/login' , (req , res)=>{
-  res.send("login done")
+
+app.use(express.urlencoded({ extended: true }));
+app.get('/upload' ,  (req , res)=>{
+   
 })
 
-app.get('/about' , (req , res)=>{
-   res.send('Ritesh');
-})
 
 app.listen(process.env.PORT, () => {
   console.log(` app listening on port ${PORT}`)
