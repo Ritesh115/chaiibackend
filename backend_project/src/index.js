@@ -12,7 +12,6 @@ connectDB()
     });
 } )
 .catch( (error)=>{
-   console.log("MONGODB connection FAILED " , error);
+   console.log("MONGODB connection FAILED !!" , error);
 } )
-
 // This is the entry point of the application. It connects to the database and starts the server.
