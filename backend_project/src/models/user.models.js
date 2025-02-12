@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
-import mongooseaggregatePaginate from 'mongoose-aggregate-paginate-v2';
 import bcrypt from 'bcrypt';
-import jsonwebtoken from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const  userSchema = new mongoose.schema({
    username : {
@@ -52,8 +51,6 @@ const  userSchema = new mongoose.schema({
 } , { timestamps: true });
 
 
-userSchema.plugin(mongooseaggregatePaginate);
-
 
 // This is for the password hashing.
 userSchema.pre("save" , async function (next) {
@@ -71,13 +68,41 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 }
 
 
+
 // This is for the jwt  token generation.
 
-userSchema.methods.generateAccessToken = function () {};
+userSchema.methods.generateAccessToken = function () {
+   return   jwt.sign(
+    {  // payload 
+      _id : this._id,
+      email : this.email,
+      username : this.username,
+      fullName : this.fullName,
+    },
+
+     process.env.ACCESS_TOKEN_SECRET,
+
+     {
+        expiresIn : process.env.ACCESS_TOKEN_EXPIRY
+     }
+   )
+};
 
 
 
-userSchema.methods.generateRefreshToken = function () {};
+userSchema.methods.generateRefreshToken = function () {
+   return   jwt.sign(
+    {  // payload 
+      _id : this._id,
+    },
+
+     process.env.REFRESH_TOKEN_SECRET,
+
+     {
+        expiresIn : process.env.REFRESH_TOKEN_EXPIRY
+     }
+   )
+};
 
 
 
