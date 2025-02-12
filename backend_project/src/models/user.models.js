@@ -9,8 +9,8 @@ const  userSchema = new mongoose.schema({
     required : true ,
     unique : true ,
     lowercase : true ,
-    trim : true ,
-    index : true, // This is for the search feature ie in search this will show on top.
+    trim : true , // 
+    index : true, // This is for the search feature ie in search this will show on top. search will be faster.
    },
    email : {
     type : String ,
@@ -26,12 +26,15 @@ const  userSchema = new mongoose.schema({
    index : true, 
    },
     avatar : {  //cloudinary url // This is for the profile picture of the user.
-      type : String ,
+      type : String , //and that url is in string format and stored in the database.
       required : true ,
     },
     coverImage : { //cloudinary url 
       type : String ,
+      required : true ,
     },
+
+    //jaise hi user will watch one video we will push that video in the watchHistory array with it id.
     watchHistory : [ 
       {
       type : mongoose.Schema.Types.ObjectId ,
@@ -51,21 +54,35 @@ const  userSchema = new mongoose.schema({
 
 userSchema.plugin(mongooseaggregatePaginate);
 
+
 // This is for the password hashing.
 userSchema.pre("save" , async function (next) {
   if(!this.isModified('password')) return next(); //Skip if password is unchanged
   
-  this.password = bcrypt.hash(this.password , 8); //// Hash new password
-  next();
+   this.password = await bcrypt.hash(this.password , 8); //// Hash new password
+  next();//After hashing the password, the middleware calls next() to proceed with saving the document.
 
 })
 
-// This is for the password verification.
+// This is for the password verification. or login purpose
 // This is a custom method that we are creating.
 userSchema.methods.isPasswordCorrect = async function (password) {
   return   await bcrypt.compare(password , this.password);//compare returns a Boolean value.
 }
 
 
+// This is for the jwt  token generation.
+
+userSchema.methods.generateAccessToken = function () {};
+
+
+
+userSchema.methods.generateRefreshToken = function () {};
+
+
+
+
+
 
 export const User = mongoose.model('User', userSchema);
+
