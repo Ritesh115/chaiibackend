@@ -1,16 +1,17 @@
 // this is a  middleware function that will handle the promise rejection.
 
+//It is used to handle asynchronous errors in Express.js, so you don’t have to write try...catch in every route.
+
 const asyncHandler = ( fun ) => {
 
-     return   (req , res , next) => {
-          Promise          //in this we are directly handling the promise.
-          .resolve( fun(req , res , next) ) //we call the function and pass the req , res and next to it.
-          .catch(
-               (err) => {next(err)} //if there is an error then we pass it to the next middleware.
-          )
+     return (req, res, next) => { // Returns a middleware function
+          Promise
+            .resolve(fun(req, res, next)) // Executes 'fun' and ensures it resolves to a Promise
+            .catch(
+               (err) => {next(err)}
+                 ); // If an error occurs, it is passed to Express error handling middleware
+        };
 
-     }
-
-}
+ }
 
 export{ asyncHandler } ; 
