@@ -24,6 +24,16 @@ app.use( express.static( "public" ) );
 app.use( cookieParser() );
 
 
+//after doing above config we will write routers.
+
+// routes
+import userRouter from "./routes/user.routes.js"
+
+
+// routes declaration   , we have to awake it like middleware.
+app.use( "/api/v1/users" ,  userRouter );
+
+// http://localhost:3000/users/register , /users ke bad it will aytomatically append.
 
 
 
