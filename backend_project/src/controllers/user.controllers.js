@@ -35,7 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   // const existedUser = User.findOne({ email });
   //or
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ email }, { username }], //through this we can check multiple fields at one time.
   });
 
