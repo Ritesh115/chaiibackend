@@ -48,19 +48,24 @@ const registerUser = asyncHandler(async (req, res) => {
   //1.get the localFile Path .
   const avatarLocalPath = req.files?.avatar[0]?.path;
   console.log("req.files :", req.files);
-  const coverImageLocalPath = req.files?.coverImageLocalPath[0]?.path;
+  const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
   //check if user has send it or not.
-  if (!avatarLocalPath) {
-    return res.status(400).json({ message: "All fields are required" });
+  if (!avatarLocalPath || !coverImageLocalPath) {
+    return res.status(400).json({ message: "All  fields are required" });
   }
 
   //2.upload it on cloudinary.
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
+  console.log("avatar: ", avatar);
+
   if (!avatar) {
     return res.status(400).json({ message: "Avatar filed is required" });
+  }
+  if (!coverImage) {
+    return res.status(400).json({ message: "Cover Image filed is required" });
   }
 
   //6.
@@ -71,7 +76,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     avatar: avatar.url,
-    coverImage: coverImage?.url || "",
+    coverImage: coverImage.url,
   });
 
   const createdUser = await user.findById(username._id).select(
