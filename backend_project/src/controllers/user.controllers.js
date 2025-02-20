@@ -79,7 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImage: coverImage.url,
   });
 
-  const createdUser = await user.findById(username._id).select(
+  const createdUser = await User.findById(user._id).select(
     "-password -refreshToken" //select inclydes those fileds which dont need to send.  and User DB it returns a _id bydefault.
   );
 
