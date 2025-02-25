@@ -7,18 +7,18 @@ const app = express();
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN, // all the requests from this origin will be allowed.
-    credentials: true,
+    credentials: true, // to allow cookies from the frontend to be sent to the backend.
   })
 );
 
 // express middleware config.
-app.use(express.json({ limit: "16kb" }));
+app.use(express.json({ limit: "16kb" })); //This is a built-in middleware function in Express. It parses incoming requests with JSON payloads.
 
 //URL Encoded Data (for form submissions)
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 
 //Static Files (Serve Images, CSS, JS)
-app.use(express.static("public"));
+app.use(express.static("public"));      //This is a built-in middleware function in Express. It serves static files and is based on serve-static.
 
 app.use(cookieParser());
 

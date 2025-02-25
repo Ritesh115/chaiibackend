@@ -14,4 +14,4 @@ const asyncHandler = ( fun ) => {
 
  }
 
-export{ asyncHandler } ; 
+export{ asyncHandler } ;    //exporting the function so that it can be used in other files.
