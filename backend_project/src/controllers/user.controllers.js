@@ -2,6 +2,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../services/cloudniary.js";
 
+
+// user registration system
+
 const registerUser = asyncHandler(async (req, res) => {
   //1. get user details from frontend ;
   //2. validation - check for empty
@@ -160,8 +163,37 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
+// user logout system 
+
+const logoutUser = asyncHandler(async (req, res) => {
+       
+  await User.findByIdAndUpdate(
+    req.user._id , 
+    {
+      $set : {
+        refreshToken : undefined  
+      }
+    },
+    {
+      new : true
+    }
+  );
+
+  const options = {
+    httpOnly: true ,
+    secure : true ,
+  }
+
+  return res
+  .status(200)
+  .clearCookie("accessToken" , options)
+  .clearCookie("refreshToken" , options)
+  .json({message : "User logged out successfully"});
+});
 
 
+
+export { registerUser, loginUser, logoutUser };
 
  
 
