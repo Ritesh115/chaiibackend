@@ -2,7 +2,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../services/cloudniary.js";
 
-
 // user registration system
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -95,7 +94,6 @@ const registerUser = asyncHandler(async (req, res) => {
   return res.status(201).json({ createdUser: "user registered successfully" });
 });
 
-
 // user login system
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -113,7 +111,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   //2
-  if (!username || !email)
+  if (!(username || email))
     return res.status(400).json({ message: "Username or email is required" });
 
   //3
@@ -137,71 +135,64 @@ const loginUser = asyncHandler(async (req, res) => {
   user.refreshToken = refreshToken;
   await user.save();
 
- //remove password and refreshToken field from response.
-  const loggedInUser =  User.findById(user._id).select(  //this is for the response check .
-    "-password -refreshToken" 
-  ) ;
+  //remove password and refreshToken field from response.
+  const loggedInUser = User.findById(user._id).select(
+    //this is for the response check .
+    "-password -refreshToken"
+  );
 
-  //6.   //7. //cookie options
+  // Convert Mongoose document to plain JavaScript object
+  const userObject = loggedInUser.toObject;
+
+  //6. //6. send token to frontend - token is send in cookie  //7. //cookie options
   const options = {
-    httpOnly: true ,
-    secure : true ,
-  }
+    httpOnly: true,
+    secure: true,
+  };
 
-    return res
+  //7. send response to frontend - user logged in successfully
+  return res
     .status(200)
-    .cookie("accessToken" , accessToken , options)
-    .cookie("refreshToken" , refreshToken ,options)
-    .json(
-      {
-        User : loggedInUser , accessToken , refreshToken
-      },
-      'User logged in successfully'
-    )
-
-
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json({
+      User: userObject,
+      accessToken,
+      refreshToken,
+      message: "User logged in successfully",
+    });
 });
 
-
-// user logout system 
+// user logout system
 
 const logoutUser = asyncHandler(async (req, res) => {
-       
   await User.findByIdAndUpdate(
-    req.user._id , 
+    req.user._id,
     {
-      $set : {
-        refreshToken : undefined  
-      }
+      $set: {
+        refreshToken: undefined,
+      },
     },
     {
-      new : true
+      new: true,
     }
   );
 
   const options = {
-    httpOnly: true ,
-    secure : true ,
-  }
+    httpOnly: true,
+    secure: true,
+  };
 
   return res
-  .status(200)
-  .clearCookie("accessToken" , options)
-  .clearCookie("refreshToken" , options)
-  .json({message : "User logged out successfully"});
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json({ message: "User logged out successfully" });
 });
-
-
 
 export { registerUser, loginUser, logoutUser };
 
- 
+//error
+// The "Converting circular structure to JSON" error typically occurs when you try to stringify an object that contains circular references. This can happen when you try to send a Mongoose document directly in a JSON response.
 
-
-
-
-
-
-
-
-export { registerUser , loginUser };
+// To fix this, you should convert the Mongoose document to a plain JavaScript object using the .toObject() method before sending it in the response. Let's update the loginUser function to address this issue:
