@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../services/cloudniary.js";
+import { jwt } from "jsonwebtoken";
 
 // user registration system
 
@@ -190,9 +191,65 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json({ message: "User logged out successfully" });
 });
 
-export { registerUser, loginUser, logoutUser };
+export { registerUser, loginUser, logoutUser }; 
 
 //error
 // The "Converting circular structure to JSON" error typically occurs when you try to stringify an object that contains circular references. This can happen when you try to send a Mongoose document directly in a JSON response.
 
 // To fix this, you should convert the Mongoose document to a plain JavaScript object using the .toObject() method before sending it in the response. Let's update the loginUser function to address this issue:
+
+
+// Refresh access token system
+
+const refreshAccessToken = asyncHandler( async (req , res)=>{
+  //1. get refresh token  - from cookie
+  //2. check if refresh token exists
+  //3. verify the refresh token
+  //4. get user from refresh token
+  //5. create new access token
+  //6. send new access token to frontend
+
+  //1 
+  const incomingRefreshToken  = req.cookies.refreshToken || req.body.refreshToken ;
+
+  if(!incomingRefreshToken) return res.status(401).json({message:"unauthorized request"});
+
+  //3
+  const decodedRefreshToken =   jwt.verify(incomingRefreshToken , process.env.REFRESH_TOKEN_SECRET) ;
+
+  //4
+
+  const user =  await User.findById(decodedRefreshToken?._id) ;
+
+  if(!user) return res.status(401).json({message:"Invalid refresh token"});
+
+  // verify if the incoming refresh token is same as the one saved in the database.
+  if(incomingRefreshToken !== user?.refreshToken) {
+        res.status(401).json({message:"Refresh token is expired or used"});
+  }
+
+  //5
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  const accessToken = await user.generateAccessToken();
+  const refreshToken = await user.generateRefreshToken();
+
+  //6
+  return  res.status(200)
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken" , refreshToken , options)
+  .json(
+    {accessToken , refreshToken } ,
+    "Access token refreshed successfully" 
+     )
+  });
+
+
+
+
+
+
+  
+}) ;
