@@ -191,16 +191,13 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json({ message: "User logged out successfully" });
 });
 
-
 //error
 // The "Converting circular structure to JSON" error typically occurs when you try to stringify an object that contains circular references. This can happen when you try to send a Mongoose document directly in a JSON response.
 
 // To fix this, you should convert the Mongoose document to a plain JavaScript object using the .toObject() method before sending it in the response. Let's update the loginUser function to address this issue:
 
-
-// Refresh access token system
-
-const refreshAccessToken = asyncHandler( async (req , res)=>{
+//refresh access token system
+const refreshAccessToken = asyncHandler(async (req, res) => {
   //1. get refresh token  - from cookie
   //2. check if refresh token exists
   //3. verify the refresh token
@@ -208,23 +205,28 @@ const refreshAccessToken = asyncHandler( async (req , res)=>{
   //5. create new access token
   //6. send new access token to frontend
 
-  //1 
-  const incomingRefreshToken  = req.cookies.refreshToken || req.body.refreshToken ;
+  //1
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
 
-  if(!incomingRefreshToken) return res.status(401).json({message:"unauthorized request"});
+  if (!incomingRefreshToken)
+    return res.status(401).json({ message: "unauthorized request" });
 
   //3
-  const decodedRefreshToken =   jwt.verify(incomingRefreshToken , process.env.REFRESH_TOKEN_SECRET) ;
+  const decodedRefreshToken = jwt.verify(
+    incomingRefreshToken,
+    process.env.REFRESH_TOKEN_SECRET
+  );
 
   //4
 
-  const user =  await User.findById(decodedRefreshToken?._id) ;
+  const user = await User.findById(decodedRefreshToken?._id);
 
-  if(!user) return res.status(401).json({message:"Invalid refresh token"});
+  if (!user) return res.status(401).json({ message: "Invalid refresh token" });
 
   // verify if the incoming refresh token is same as the one saved in the database.
-  if(incomingRefreshToken !== user?.refreshToken) {
-        res.status(401).json({message:"Refresh token is expired or used"});
+  if (incomingRefreshToken !== user?.refreshToken) {
+    res.status(401).json({ message: "Refresh token is expired or used" });
   }
 
   //5
@@ -236,15 +238,37 @@ const refreshAccessToken = asyncHandler( async (req , res)=>{
   const refreshToken = await user.generateRefreshToken();
 
   //6
-  return  res.status(200)
-  .cookie("accessToken", accessToken, options)
-  .cookie("refreshToken" , refreshToken , options)
-  .json(
-    {accessToken , refreshToken } ,
-    "Access token refreshed successfully" 
-     )
-  });
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json({ accessToken, refreshToken }, "Access token refreshed successfully");
+});
 
+//changing password
 
+const changeCurrentPassword = asyncHandler((req, res) => {
+  //1. get current password and new password from frontend
+  //2. access user from req.user
+  //3. check if current password is correct
+  //4. change the password
+  //5. send response to frontend
 
-  export { registerUser, loginUser, logoutUser }; 
+  const { currentPassword, newPassword } = req.body;
+
+  const user = User.findById(req.user?._id);
+  if (!user) return res.status(404).json({ message: "User does not exist" });
+
+  const isPasswordCorrect = user.isPasswordCorrect(currentPassword);
+
+  if (!isPasswordCorrect)
+    return res.status(400).json({ message: "Current password is incorrect" });
+
+  user.password = newPassword; // here we have only set it  , not save
+
+  user.save({ validateBeforeSave: false });
+
+  return res.status(200).json({ message: "Password changed successfully" });
+});
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken };
