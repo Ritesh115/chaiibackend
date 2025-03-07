@@ -271,4 +271,63 @@ const changeCurrentPassword = asyncHandler((req, res) => {
   return res.status(200).json({ message: "Password changed successfully" });
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+
+// getCurrentUser 
+const getCurrentUser = asyncHandler( (req , res)=>{
+  //1. get user from req.user
+  //2. send response to frontend
+
+  return res
+  .status(200)
+  .json(
+    200,
+    req.user ,
+    "Current user fetched successfully"
+  );
+} ); 
+
+
+// update user profile
+
+const updateAccountDetails = asyncHandler( (req,res)=>{
+
+  //1. get updated details from frontend
+  //2. access user from req.user
+  //3. check if user exists
+  //4. update user details
+  //5. send response to frontend
+
+const { username , fullName , email } = req.body;
+
+  if(!username || !fullName) return res.status(400).json({message : "All fileds are required"});
+   
+//2
+const user = User.findById(req.user?._id).select("-password -refreshToken") ;
+if(!user) return res.status(404).json({message : "User does not exist"});
+
+//or
+// const user = User.findByIdAndUpdate(
+//   req.user?._id ,
+//   {
+//     $set : { username , fullName : fullName }
+//   } ,
+//   {new : true} //to get the updated user data in response
+// )
+//   .select("-password -refreshToken") ;
+
+
+//4
+user.username = username ;
+user.fullName = fullName ;
+
+User.save({validateBeforeSave : false});
+
+//5
+return res.status(200).json({message : "User details updated successfully"})
+
+} );
+
+
+
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken , changeCurrentPassword , getCurrentUser , updateAccountDetails};
