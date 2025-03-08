@@ -3,6 +3,25 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../services/cloudniary.js";
 import jwt from "jsonwebtoken";
 
+
+//methods
+const generateAccessAndRefreshTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId) ;
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken ;
+    await user.save({validateBeforeSave : false});
+
+    return { accessToken , refreshToken } ;
+  } catch (error) {
+    res.status(500).json(
+      error?.message || "something went wrong while generating refresh and access token"
+    )
+  }
+};
+
 // user registration system
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -237,15 +256,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
   };
-  const accessToken = await user.generateAccessToken();
-  const refreshToken = await user.generateRefreshToken();
+  // const accessToken = await user.generateAccessToken();
+  // const refreshToken = await user.generateRefreshToken();
+  ///or
+  const {accessToken , newrefreshToken} = await generateAccessAndRefreshTokens(user._id);
 
   //6
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json({ accessToken, refreshToken }, "Access token refreshed successfully");
+    .cookie("refreshToken", newrefreshToken, options)
+    .json({ accessToken, newrefreshToken }, "Access token refreshed successfully");
 });
 
 //changing password
