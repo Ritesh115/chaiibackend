@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../services/cloudniary.js";
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 // user registration system
 
@@ -83,6 +83,8 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImage: coverImage.url,
   });
 
+  console.log("user: ", user); //just for checking
+
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken" //select inclydes those fileds which dont need to send.  and User DB it returns a _id bydefault.
   );
@@ -116,11 +118,15 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!(username || email))
     return res.status(400).json({ message: "Username or email is required" });
 
+  console.log("email:", email);
+
   //3
   const user = await User.findOne({
     //user is instance of db user
     $or: [{ email }, { username }],
   });
+
+  console.log("user: ", user); //just for checking
 
   if (!user) return res.status(404).json({ message: "User does not exist" });
 
@@ -144,7 +150,7 @@ const loginUser = asyncHandler(async (req, res) => {
   );
 
   // Convert Mongoose document to plain JavaScript object
-  const userObject = loggedInUser.toObject;
+  // const userObject = loggedInUser.toObject;
 
   //6. //6. send token to frontend - token is send in cookie  //7. //cookie options
   const options = {
@@ -158,7 +164,7 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json({
-      User: userObject,
+      // User: userObject,
       accessToken,
       refreshToken,
       message: "User logged in successfully",
@@ -168,15 +174,16 @@ const loginUser = asyncHandler(async (req, res) => {
 // user logout system
 
 const logoutUser = asyncHandler(async (req, res) => {
+  //Clearing the Refresh Token from the Database
   await User.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
-        refreshToken: undefined,
+        refreshToken: undefined, // Remove refreshToken from DB
       },
     },
     {
-      new: true,
+      new: true, // Return the updated user document
     }
   );
 
@@ -187,7 +194,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .clearCookie("accessToken", options)
+    .clearCookie("accessToken", options) //Deletes the access token from cookies
     .clearCookie("refreshToken", options)
     .json({ message: "User logged out successfully" });
 });
@@ -272,63 +279,60 @@ const changeCurrentPassword = asyncHandler((req, res) => {
   return res.status(200).json({ message: "Password changed successfully" });
 });
 
-
-// getCurrentUser 
-const getCurrentUser = asyncHandler( (req , res)=>{
+// getCurrentUser
+const getCurrentUser = asyncHandler((req, res) => {
   //1. get user from req.user
   //2. send response to frontend
 
   return res
-  .status(200)
-  .json(
-    200,
-    req.user ,
-    "Current user fetched successfully"
-  );
-} ); 
-
+    .status(200)
+    .json(200, req.user, "Current user fetched successfully");
+});
 
 // update user profile
 
-const updateAccountDetails = asyncHandler( (req,res)=>{
-
+const updateAccountDetails = asyncHandler((req, res) => {
   //1. get updated details from frontend
   //2. access user from req.user
   //3. check if user exists
   //4. update user details
   //5. send response to frontend
 
-const { username , fullName , email } = req.body;
+  const { username, fullName, email } = req.body;
 
-  if(!username || !fullName) return res.status(400).json({message : "All fileds are required"});
-   
-//2
-const user = User.findById(req.user?._id).select("-password -refreshToken") ;
-if(!user) return res.status(404).json({message : "User does not exist"});
+  if (!username || !fullName)
+    return res.status(400).json({ message: "All fileds are required" });
 
-//or
-// const user = User.findByIdAndUpdate(
-//   req.user?._id ,
-//   {
-//     $set : { username , fullName : fullName }
-//   } ,
-//   {new : true} //to get the updated user data in response
-// )
-//   .select("-password -refreshToken") ;
+  //2
+  const user = User.findById(req.user?._id).select("-password -refreshToken");
+  if (!user) return res.status(404).json({ message: "User does not exist" });
 
+  //or
+  // const user = User.findByIdAndUpdate(
+  //   req.user?._id ,
+  //   {
+  //     $set : { username , fullName : fullName }
+  //   } ,
+  //   {new : true} //to get the updated user data in response
+  // )
+  //   .select("-password -refreshToken") ;
 
-//4
-user.username = username ;
-user.fullName = fullName ;
+  //4
+  user.username = username;
+  user.fullName = fullName;
 
-User.save({validateBeforeSave : false});
+  User.save({ validateBeforeSave: false });
 
-//5
-return res.status(200).json({message : "User details updated successfully"})
+  //5
+  return res.status(200).json({ message: "User details updated successfully" });
+});
 
-} );
-
-
-
-
-export { registerUser, loginUser, logoutUser, refreshAccessToken , changeCurrentPassword , getCurrentUser , updateAccountDetails};
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
+};
