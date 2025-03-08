@@ -199,11 +199,6 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json({ message: "User logged out successfully" });
 });
 
-//error
-// The "Converting circular structure to JSON" error typically occurs when you try to stringify an object that contains circular references. This can happen when you try to send a Mongoose document directly in a JSON response.
-
-// To fix this, you should convert the Mongoose document to a plain JavaScript object using the .toObject() method before sending it in the response. Let's update the loginUser function to address this issue:
-
 //refresh access token system
 const refreshAccessToken = asyncHandler(async (req, res) => {
   //1. get refresh token  - from cookie
