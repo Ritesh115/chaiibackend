@@ -270,7 +270,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 //changing password
-
 const changeCurrentPassword = asyncHandler((req, res) => {
   //1. get current password and new password from frontend
   //2. access user from req.user
@@ -306,7 +305,6 @@ const getCurrentUser = asyncHandler((req, res) => {
 });
 
 // update user profile
-
 const updateAccountDetails = asyncHandler((req, res) => {
   //1. get updated details from frontend
   //2. access user from req.user
