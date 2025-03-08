@@ -51,6 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //1.get the localFile Path .
   const avatarLocalPath = req.files?.avatar[0]?.path;
   console.log("req.files :", req.files);
+  console.log("avatarFiled:", req.files?.avatar);
   const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
   //check if user has send it or not.
