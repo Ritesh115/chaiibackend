@@ -286,7 +286,7 @@ const changeCurrentPassword = asyncHandler((req, res) => {
 
   user.password = newPassword; // here we have only set it  , not save
 
-  user.save({ validateBeforeSave: false });
+  user.save({ validateBeforeSave: false }); //pre hook bhi call karna tha
 
   return res.status(200).json({ message: "Password changed successfully" });
 });
@@ -328,15 +328,57 @@ const updateAccountDetails = asyncHandler((req, res) => {
   // )
   //   .select("-password -refreshToken") ;
 
+  //or
   //4
   user.username = username;
   user.fullName = fullName;
-
   User.save({ validateBeforeSave: false });
 
   //5
   return res.status(200).json({ message: "User details updated successfully" });
 });
+
+// update file data
+const updateUserAvatarImage = asyncHandler( async (req , res)=>{
+       const avatarLocalPath =  req.file?.path ;
+       if(!avatarLocalPath) return res.status(400).json({message:"Avatar file missing"}) ;
+
+        const avatar = await uploadOnCloudinary(avatarLocalPath);
+        if(!avatar.url) return res.status(400).json({message:"Error while uploading avatar"}) ;
+
+        const user = User.findByIdAndUpdate(
+           req.user?._id ,
+           {
+             $set : { avatar : avatar.url }
+           } ,
+           {new : true} //to get the updated user data in response
+          ) .select("-password -refreshToken") ;
+
+          return res.status(200).json({message: "Avatar updated successfully"})
+        
+} );
+
+const updateUserCoverImage = asyncHandler( async (req , res)=>{
+  const CoverImageLocalPath =  req.file?.path ;
+  if(!CoverImageLocalPath) return res.status(400).json({message:"CoverImage file missing"}) ;
+
+   const CoverImage = await uploadOnCloudinary(CoverImageLocalPath);
+   if(!CoverImage.url) return res.status(400).json({message:"Error while uploading CoverImage"}) ;
+
+   const user = User.findByIdAndUpdate(
+      req.user?._id ,
+      {
+        $set : { CoverImage : CoverImage.url }
+      } ,
+      {new : true} //to get the updated user data in response
+     ) .select("-password -refreshToken") ;
+
+     return res.status(200).json({message: "CoverImage updated successfully"})
+   
+} );
+
+ 
+
 
 export {
   registerUser,
@@ -346,4 +388,6 @@ export {
   changeCurrentPassword,
   getCurrentUser,
   updateAccountDetails,
+  updateUserAvatarImage,
+  updateUserCoverImage
 };
