@@ -23,7 +23,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 // user registration system
-
 const registerUser = asyncHandler(async (req, res) => {
   //1. get user details from frontend ;
   //2. validation - check for empty
@@ -118,7 +117,6 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 // user login system
-
 const loginUser = asyncHandler(async (req, res) => {
   //todos for login user
 
@@ -191,7 +189,6 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // user logout system
-
 const logoutUser = asyncHandler(async (req, res) => {
   //Clearing the Refresh Token from the Database
   await User.findByIdAndUpdate(
