@@ -10,7 +10,7 @@ const subscriptionSchema = new mongoose.Schema(
       },
     ],
 
-    channel: {
+    channel: { //one who is being subscribed
       type: mongoose.Schema.Types.ObjectId, //one who is being subscribed
       ref: "User",
     },
@@ -19,3 +19,4 @@ const subscriptionSchema = new mongoose.Schema(
 );
 
 export const Subscription = mongoose.model("Subscription", subscriptionSchema);
+ 

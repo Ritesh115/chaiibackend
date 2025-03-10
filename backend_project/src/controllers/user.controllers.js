@@ -319,7 +319,7 @@ const updateAccountDetails = asyncHandler((req, res) => {
   if (!user) return res.status(404).json({ message: "User does not exist" });
 
   //or
-  // const user = User.findByIdAndUpdate(
+  // const user = await User.findByIdAndUpdate(
   //   req.user?._id ,
   //   {
   //     $set : { username , fullName : fullName }
@@ -346,7 +346,7 @@ const updateUserAvatarImage = asyncHandler( async (req , res)=>{
         const avatar = await uploadOnCloudinary(avatarLocalPath);
         if(!avatar.url) return res.status(400).json({message:"Error while uploading avatar"}) ;
 
-        const user = User.findByIdAndUpdate(
+        const user = await User.findByIdAndUpdate(
            req.user?._id ,
            {
              $set : { avatar : avatar.url }
@@ -365,7 +365,7 @@ const updateUserCoverImage = asyncHandler( async (req , res)=>{
    const CoverImage = await uploadOnCloudinary(CoverImageLocalPath);
    if(!CoverImage.url) return res.status(400).json({message:"Error while uploading CoverImage"}) ;
 
-   const user = User.findByIdAndUpdate(
+   const user =  await User.findByIdAndUpdate(
       req.user?._id ,
       {
         $set : { CoverImage : CoverImage.url }
@@ -375,7 +375,7 @@ const updateUserCoverImage = asyncHandler( async (req , res)=>{
 
      return res.status(200).json({message: "CoverImage updated successfully"})
    
-} );
+} ); 
 
  
 
