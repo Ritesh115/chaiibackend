@@ -377,7 +377,52 @@ const updateUserCoverImage = asyncHandler( async (req , res)=>{
    
 } ); 
 
+
+//get user Profile
+const getUserChannelProfile = asyncHandler(async (req , res)=>{
+
+      const {username} = req.params ; 
  
+      if(!username?.trim()) return res.status(400).json({message : "user not found"})
+    
+      // const channel = await User.findOne({username}).select("-password -refreshToken") ; 
+      //or
+   const channel = await User.aggregate([
+    // first pipeline or stage
+      {
+        $match : {
+          username : username?.toLowerCase()
+        }
+      } ,
+      {
+        $lookup : {
+          from : "subscriptions",
+          localFiled : "-_id",
+          foreignFiled : "channel",
+          as : "subscribers"
+        }
+      } ,
+      {
+        $lookup :{
+          from : "subscriptions",
+          localFiled : "-_id",
+          foreignFiled : "subscriber",
+          as : "subscribedTo"
+        }
+      },
+      {
+
+      }
+    ]); 
+
+
+
+
+
+
+});
+
+
 
 
 export {
