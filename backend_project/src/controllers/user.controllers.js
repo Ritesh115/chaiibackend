@@ -394,6 +394,7 @@ const getUserChannelProfile = asyncHandler(async (req , res)=>{
           username : username?.toLowerCase()
         }
       } ,
+      //second pipeline
       {
         $lookup : {
           from : "subscriptions",
@@ -402,6 +403,7 @@ const getUserChannelProfile = asyncHandler(async (req , res)=>{
           as : "subscribers"
         }
       } ,
+      //third pipeline
       {
         $lookup :{
           from : "subscriptions",
@@ -410,15 +412,49 @@ const getUserChannelProfile = asyncHandler(async (req , res)=>{
           as : "subscribedTo"
         }
       },
+      //fourth pipeline
       {
-
+         $addFileds : {
+          subscribersCount : {
+            $size : "$subscribers"
+          },
+          channelSubscribedToCount : {
+             $size : "$subscribedTo"
+          },
+          isSubscribed : {
+            $cond : {
+               if: {$in : [req.user?._id , "$subscribers.subscriber"]},
+               then : true, 
+               else : false,
+            }
+          }
+         }
+      },
+      // fifth pipeline
+      {
+        $project : {
+          username : 1,
+          email : 1,
+          fullName : 1,
+          avatar : 1,
+          coverImage : 1,
+          subscribersCount  : 1,
+          channelSubscribedToCount  : 1,
+          isSubscribed : 1,
+        }
       }
     ]); 
 
+console.log("channel: " ,  channel); // returns array of object
 
+if(!channel?.length){
+   res.status(404).json({message  : "channel not found"})
+}
 
-
-
+return res.status(200).json(
+  channel[0] , 
+  "user channel fetched successfully"
+)
 
 });
 
